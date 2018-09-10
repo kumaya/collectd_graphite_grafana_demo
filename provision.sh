@@ -85,10 +85,11 @@ for v in 1 2 3; do
 done
 
 # Collectd
+modprobe nf_conntrack   # "read-function of plugin `conntrack' failed"
 apt-get install -y collectd collectd-utils
 sed -i 's/#Hostname.*/Hostname "graph_host"/' /etc/collectd/collectd.conf
-for x in apache cpu df entropy interface load memory \
-        processes rrdtool users write_graphite; do
+for x in apache cpu df entropy interface load memory uptime\
+        processes rrdtool users write_graphite conntrack; do
     echo $x
     sed -i "s|#LoadPlugin ${x}|LoadPlugin ${x}|" /etc/collectd/collectd.conf
 done
@@ -109,8 +110,8 @@ cat <<EOF >> /etc/collectd/collectd.conf
 </Plugin>
 
 <Plugin interface>
-    Interface "eth0"
-    IgnoreSelected false
+    Interface "lo"
+    IgnoreSelected true
 </Plugin>
 
 <Plugin write_graphite>
@@ -156,3 +157,4 @@ apt-get install -y grafana
 setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana
 update-rc.d grafana defaults 95 10
 service grafana start
+umask 226 && echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant_user
