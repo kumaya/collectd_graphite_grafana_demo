@@ -20,9 +20,6 @@ apt-get -f install -y
 apt-get install -y apt-transport-https
 apt-get update
 
-# Update apt sources for Grafana
-curl -s https://packagecloud.io/install/repositories/grafana/stable/script.deb.sh | bash
-
 # Graphite
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -y postgresql
@@ -152,9 +149,10 @@ service collectd stop
 service collectd start
 
 # Grafana
-apt-get install -y grafana
-
-setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana
-update-rc.d grafana defaults 95 10
-service grafana start
+wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana_5.2.4_amd64.deb
+dpkg -i grafana_5.2.4_amd64.deb
+rm grafana_5.2.4_amd64.deb
+setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana-server
+update-rc.d grafana-server defaults 95 10
+service grafana-server start
 umask 226 && echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant_user
