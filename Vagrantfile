@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "regiohelden/ubuntu-16.04"
+  config.vm.box = "generic/ubuntu1804"
   config.vm.provider "libvirt" do |l|
   	l.memory = "4096"
   	l.cpus = 3
